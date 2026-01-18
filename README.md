@@ -1,13 +1,12 @@
-✅ FINAL README.md (FULL, UPDATED, SAFE)
 
-You can copy–paste this entirely.
-
-🌍 Multi-Region Kubernetes Platform with GitOps (Argo CD)
+# Multi-Region Kubernetes Platform with GitOps (Argo CD)
 
 This project demonstrates a multi-region Kubernetes platform on AWS using Terraform, Amazon EKS, and GitOps with Argo CD.
 A containerized FastAPI application is deployed and managed declaratively using Git as the single source of truth.
 
-🎯 Project Goals
+---
+
+## Project Goals
 
 Provision multiple Kubernetes clusters across regions
 
@@ -21,7 +20,9 @@ Demonstrate self-healing and scaling via Git
 
 Provision regional PostgreSQL and Redis infrastructure
 
-🏗 Architecture Overview
+---
+
+## Architecture Overview
 
 The platform consists of:
 
@@ -35,20 +36,25 @@ A FastAPI demo application
 
 PostgreSQL and Redis provisioned per region via Terraform
 
-📷 Architecture diagram:
+---
 
-docs/architecture.png
+## Architecture diagram:
 
+[!docs/architecture.png]
 
-🌐 AWS Regions Used
-Region	Purpose
+---
+
+## AWS Regions Used
+**Region	Purpose**
 us-east-1	Primary cluster
 eu-west-1	Secondary cluster
 ap-southeast-1	Secondary cluster
 
 Each region is deployed independently.
 
-🧰 Technology Stack
+---
+
+## Technology Stack
 Layer	Tool
 Cloud	AWS
 Kubernetes	Amazon EKS
@@ -58,7 +64,11 @@ Application	FastAPI
 Containerization	Docker
 Database	PostgreSQL (RDS)
 Cache	Redis (ElastiCache)
-📂 Repository Structure
+
+---
+
+## Repository Structure
+```
 multi-region-k8s/
 ├── docs/
 │   └── architecture.png
@@ -68,22 +78,20 @@ multi-region-k8s/
 ├── k8s/
 │   └── app.yaml
 ├── terraform/
-│   ├── envs/
-│   │   ├── us-east-1/
-│   │   ├── eu-west-1/
-│   │   └── ap-southeast-1/
-│   ├── global/
-│   └── modules/
-│       ├── network/
-│       └── database/
+│       ├── envs/
+│         ├── us-east-1/
+│         ├── eu-west-1/
+│         └── ap-southeast-1/
 ├── screenshots/
 ├── project-app.yaml
 ├── submission.yml
 └── README.md
+```
+---
 
-🏗 Infrastructure Provisioning (Terraform)
+## Infrastructure Provisioning (Terraform)
 
-Terraform provisions the following per region:
+**Terraform provisions the following per region:**
 
 VPC, subnets, routing
 
@@ -95,29 +103,34 @@ PostgreSQL (RDS)
 
 Redis (ElastiCache)
 
-Example:
-
+**Example:**
+```
 cd terraform/envs/us-east-1
+```
+```
 terraform init
+```
+```
 terraform apply
+```
+---
 
+**All infrastructure is reproducible and region-isolated.**
 
-✔ All infrastructure is reproducible and region-isolated.
+## Data Layer (PostgreSQL & Redis)
+**What Was Implemented**
 
-🗄 Data Layer (PostgreSQL & Redis)
-✅ What Was Implemented
+- PostgreSQL and Redis are provisioned in each region using Terraform modules
 
-PostgreSQL and Redis are provisioned in each region using Terraform modules
+- Each region has independent database instances
 
-Each region has independent database instances
-
-No cross-region replication is configured (by design)
+- No cross-region replication is configured (by design)
 
 Region	PostgreSQL	Redis
 us-east-1	✅ Provisioned	✅ Provisioned
 eu-west-1	✅ Provisioned	✅ Provisioned
 ap-southeast-1	✅ Provisioned	✅ Provisioned
-⚠️ Important Clarification (Intentional Design)
+**Important Clarification (Intentional Design)**
 
 The FastAPI demo application does NOT depend on PostgreSQL or Redis at runtime.
 
@@ -131,7 +144,8 @@ No application functionality depends on successful DB connectivity
 
 This separation ensures the demo remains stable while still validating multi-region data infrastructure provisioning.
 
-🔄 GitOps with Argo CD
+---
+## GitOps with Argo CD
 
 Argo CD is used to:
 
@@ -143,7 +157,9 @@ Enforce desired state automatically
 
 Reconcile drift and recreate deleted resources
 
-📦 Application Deployment (FastAPI)
+---
+
+## Application Deployment (FastAPI)
 
 FastAPI app is containerized using Docker
 
@@ -153,39 +169,42 @@ Exposed via LoadBalancer / NodePort
 
 Health endpoint available at /health
 
-Sample response:
-
+**Sample response:**
+```
 {
   "app": "FastAPI GitOps Demo",
   "pod": "fastapi-app-xxxx",
   "region": ""
 }
+```
+---
 
-🔁 GitOps Proof (Demonstrated)
-✔ Automated Sync
+## GitOps Proof (Demonstrated)
+Automated Sync
 
-Changes pushed to Git
+***Changes pushed to Git**
 
 Argo CD auto-synced cluster state
 
-✔ Self-Healing
+***Self-Healing***
+```
 kubectl delete pod -l app=demo-app
 
-
+```
 Pods were recreated automatically.
 
-✔ Scaling via Git
+***Scaling via Git***
 
 Replica count changed in Git
 
 Argo CD applied scaling automatically
 
-🌍 Multi-Cluster Management
+---
+## Multi-Cluster Management
 
 All clusters were registered with Argo CD:
 
-argocd cluster list
-
+***argocd cluster list***
 
 Clusters:
 
@@ -197,25 +216,16 @@ eu-west-1
 
 ap-southeast-1
 
-🧹 Cleanup (Cost Safe)
+## Cleanup (Cost Safe)
 
 All resources can be removed using:
 
+```
 terraform destroy
-
+```
 
 Ensures no AWS costs remain.
 
-✅ Final Outcome
-
-✔ Multi-region EKS clusters provisioned
-✔ PostgreSQL and Redis provisioned per region
-✔ GitOps implemented using Argo CD
-✔ FastAPI app deployed declaratively
-✔ Automated sync validated
-✔ Self-healing demonstrated
-✔ Scaling controlled via Git
-✔ Infrastructure safely destroyed
 
 🔗 Repository
 
