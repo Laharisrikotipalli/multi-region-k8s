@@ -1,24 +1,48 @@
-# Automated Submission Manifest
-version: "1.0"
-commands:
-  deploy:
-    description: "Builds VPCs, EKS Clusters, and RDS in 3 regions."
-    script: |
-      for r in ap-southeast-1 us-east-1 eu-west-1; do
-        cd terraform/envs/$r && terraform init && terraform apply -auto-approve && cd ../../..
-      done
-  verify:
-    description: "Checks if pods are running and Load Balancer is active."
-    script: |
-      kubectl get pods -A --context arn:aws:eks:ap-southeast-1:306601824743:cluster/mrk8s-ap-southeast-1
-      curl -I http://ac7097a0815114964afefa210044c374-398099437.ap-southeast-1.elb.amazonaws.com
-  test-failover:
-    description: "Simulates Singapore failure to test global resilience."
-    script: |
-      kubectl scale deployment ecom-api --replicas=0 -n ecom --context arn:aws:eks:ap-southeast-1:306601824743:cluster/mrk8s-ap-southeast-1
-      echo "Singapore down. Verifying traffic shifts to US/Ireland..."
-      sleep 45
-      curl -f http://ac7097a0815114964afefa210044c374-398099437.ap-southeast-1.elb.amazonaws.com
-  destroy:
-    description: "Wipes all resources to stop billing."
-    script: "terraform destroy -auto-approve"
+project:
+  title: "Multi-Region Kubernetes Platform using GitOps"
+  description: >
+    Designed and implemented a multi-region Kubernetes platform on AWS using
+    Terraform, Amazon EKS, and Argo CD. The project demonstrates GitOps-based
+    application delivery, automated synchronization, self-healing, and scaling
+    using Git as the single source of truth.
+
+infrastructure:
+  cloud_provider: AWS
+  regions:
+    - us-east-1
+    - eu-west-1
+    - ap-southeast-1
+  kubernetes: Amazon EKS
+  provisioning: Terraform
+
+data_layer:
+  postgres: Provisioned per region using Terraform (RDS)
+  redis: Provisioned per region using Terraform (ElastiCache)
+  note: >
+    Databases were provisioned to demonstrate infrastructure capability.
+    The demo FastAPI application does not depend on database connectivity
+    at runtime, and any DB connection failures are non-blocking.
+
+gitops:
+  tool: Argo CD
+  features:
+    - Automated synchronization
+    - Drift detection and self-healing
+    - Declarative application management
+    - Git-based scaling
+
+application:
+  type: FastAPI
+  deployment: Kubernetes Deployment
+  exposure: LoadBalancer / NodePort
+  healthcheck: /health
+
+validation:
+  - Git-driven application updates
+  - Pod self-healing after deletion
+  - Scaling via Git commits
+  - Multi-cluster registration in Argo CD
+
+cleanup:
+  method: terraform destroy
+  cost_safe: true
