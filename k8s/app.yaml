@@ -1,32 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: demo-app
+  name: fastapi-app
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: demo-app
+      app: fastapi-app
   template:
     metadata:
       labels:
-        app: demo-app
+        app: fastapi-app
     spec:
       containers:
-        - name: demo-app
-          image: nginx
+        - name: fastapi
+          image: laharisri/fastapi-gitops
           ports:
-            - containerPort: 80
+            - containerPort: 8000
+          env:
+            - name: AWS_REGION
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['topology.kubernetes.io/region']
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: demo-app
+  name: fastapi-app
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
-    app: demo-app
+    app: fastapi-app
   ports:
     - port: 80
-      targetPort: 80
-      nodePort: 30080
+      targetPort: 8000
