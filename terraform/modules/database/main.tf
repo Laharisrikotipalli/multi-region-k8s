@@ -1,63 +1,76 @@
-# --- POSTGRESQL RDS ---
-resource "aws_db_subnet_group" "postgres" {
-  name       = "${var.identifier}-pg-subnet-group"
-  subnet_ids = var.subnet_ids
-}
-
+# --- SECURITY GROUP ---
 resource "aws_security_group" "db_sg" {
-  name   = "${var.identifier}-db-sg"
-  vpc_id = var.vpc_id
+  # REVERTED: Matching the exact name/description currently in AWS
+  name        = "${var.identifier}-db-sg-final" 
+  description = "Allow access to RDS and Redis"
+  vpc_id      = var.vpc_id
 
+  # PostgreSQL Access
   ingress {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
     cidr_blocks = [var.vpc_cidr]
   }
-}
 
-resource "aws_db_instance" "postgres" {
-  identifier           = "${var.identifier}-db"
-  engine               = "postgres"
-  engine_version       = "15"
-  instance_class       = "db.t3.micro"
-  allocated_storage    = 20
-  db_name              = "appdb"
-  username             = var.db_username
-  password             = var.db_password
-  db_subnet_group_name = aws_db_subnet_group.postgres.name
-  vpc_security_group_ids = [aws_security_group.db_sg.id]
-  skip_final_snapshot  = true
-}
-
-# --- REDIS ELASTICACHE ---
-resource "aws_elasticache_subnet_group" "redis" {
-  name       = "${var.identifier}-rs-subnet-group"
-  subnet_ids = var.subnet_ids
-}
-
-resource "aws_security_group" "redis_sg" {
-  name   = "${var.identifier}-redis-sg"
-  vpc_id = var.vpc_id
-
+  # Redis Access
   ingress {
     from_port   = 6379
     to_port     = 6379
     protocol    = "tcp"
     cidr_blocks = [var.vpc_cidr]
   }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
-resource "aws_elasticache_cluster" "redis" {
-  cluster_id           = "${var.identifier}-redis"
-  engine               = "redis"
+# --- RDS SUBNET GROUP ---
+resource "aws_db_subnet_group" "db_group" {
+  # REVERTED: Matching the exact name used in AWS
+  name       = "${var.identifier}-subnets-final"
+  subnet_ids = var.subnet_ids
+}
+
+# --- RDS INSTANCE (Primary or Replica) ---
+resource "aws_db_instance" "this" {
+  identifier           = var.identifier
+  instance_class       = "db.t3.micro"
+  db_subnet_group_name = aws_db_subnet_group.db_group.name
+  vpc_security_group_ids = [aws_security_group.db_sg.id]
+  skip_final_snapshot  = true
+
+  replicate_source_db = var.replicate_source_db
+  
+  engine            = var.replicate_source_db == null ? "postgres" : null
+  username          = var.replicate_source_db == null ? var.db_username : null
+  password          = var.replicate_source_db == null ? var.db_password : null
+  allocated_storage = var.replicate_source_db == null ? 20 : null
+  
+  backup_retention_period = var.backup_retention_period
+}
+
+# --- REDIS SUBNET GROUP ---
+resource "aws_elasticache_subnet_group" "redis_subnets" {
+  name       = "${var.identifier}-redis-subnets-final"
+  subnet_ids = var.subnet_ids
+}
+
+# --- REDIS REPLICATION GROUP ---
+resource "aws_elasticache_replication_group" "this" {
+  replication_group_id = "${var.identifier}-redis"
+  description          = "Redis for ${var.identifier}"
   node_type            = "cache.t3.micro"
-  num_cache_nodes      = 1
   port                 = 6379
-  subnet_group_name    = aws_elasticache_subnet_group.redis.name
-  security_group_ids   = [aws_security_group.redis_sg.id]
+  engine               = "redis"
+  engine_version       = "7.0"
+  subnet_group_name    = aws_elasticache_subnet_group.redis_subnets.name
+  security_group_ids   = [aws_security_group.db_sg.id]
+  
+  num_cache_clusters         = 1
+  automatic_failover_enabled = false
 }
-
-# --- OUTPUTS ---
-output "db_endpoint" { value = aws_db_instance.postgres.endpoint }
-output "redis_endpoint" { value = aws_elasticache_cluster.redis.cache_nodes[0].address }

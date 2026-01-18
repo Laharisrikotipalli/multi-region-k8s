@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecom-api
+  namespace: ecom
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ecom-api
+  template:
+    metadata:
+      labels:
+        app: ecom-api
+    spec:
+      containers:
+      - name: fastapi
+        image: 306601824743.dkr.ecr.us-east-1.amazonaws.com/node-app:v3
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://postgres:CloudProject2026!@mrk8s-ie.cbq8s2ccqb2r.eu-west-1.rds.amazonaws.com:5432/postgres"
+        - name: REGION
+          value: "eu-west-1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecom-api-service
+  namespace: ecom
+spec:
+  selector:
+    app: ecom-api
+  ports:
+  - port: 80
+    targetPort: 3000
+  type: LoadBalancer

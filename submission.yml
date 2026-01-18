@@ -1,0 +1,24 @@
+# Automated Submission Manifest
+version: "1.0"
+commands:
+  deploy:
+    description: "Builds VPCs, EKS Clusters, and RDS in 3 regions."
+    script: |
+      for r in ap-southeast-1 us-east-1 eu-west-1; do
+        cd terraform/envs/$r && terraform init && terraform apply -auto-approve && cd ../../..
+      done
+  verify:
+    description: "Checks if pods are running and Load Balancer is active."
+    script: |
+      kubectl get pods -A --context arn:aws:eks:ap-southeast-1:306601824743:cluster/mrk8s-ap-southeast-1
+      curl -I http://ac7097a0815114964afefa210044c374-398099437.ap-southeast-1.elb.amazonaws.com
+  test-failover:
+    description: "Simulates Singapore failure to test global resilience."
+    script: |
+      kubectl scale deployment ecom-api --replicas=0 -n ecom --context arn:aws:eks:ap-southeast-1:306601824743:cluster/mrk8s-ap-southeast-1
+      echo "Singapore down. Verifying traffic shifts to US/Ireland..."
+      sleep 45
+      curl -f http://ac7097a0815114964afefa210044c374-398099437.ap-southeast-1.elb.amazonaws.com
+  destroy:
+    description: "Wipes all resources to stop billing."
+    script: "terraform destroy -auto-approve"
