@@ -1,7 +1,7 @@
 
 ---
 
-# 📕 RUNBOOK.md
+#  RUNBOOK.md
 
 ```md
 # RUNBOOK – Multi-Region Kubernetes GitOps Platform
