@@ -39,8 +39,7 @@ PostgreSQL and Redis provisioned per region via Terraform
 ---
 
 ## Architecture diagram:
-
-[!docs/architecture.png]
+![img](docs/architecture.png)
 
 ---
 
