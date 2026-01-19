@@ -49,7 +49,7 @@ The following architecture illustrates the complete system design, including mul
 
 The following tools and technologies were used to build and manage this multi-region Kubernetes platform:
 
-### ☁️ Cloud & Infrastructure
+###  Cloud & Infrastructure
 - **AWS EKS** – Managed Kubernetes service
 - **Amazon EC2** – Worker nodes
 - **VPC, Subnets, Route Tables** – Network isolation per region
@@ -57,22 +57,22 @@ The following tools and technologies were used to build and manage this multi-re
 - **Amazon RDS (PostgreSQL)** – Regional database (infrastructure provisioned)
 - **Amazon ElastiCache (Redis)** – Caching layer (infrastructure provisioned)
 
-### ⚙️ Infrastructure as Code
+###  Infrastructure as Code
 - **Terraform**
   - Modular Terraform structure
   - Separate environments per region
   - Fully reproducible infrastructure
 
-### 🚀 Kubernetes & GitOps
+###  Kubernetes & GitOps
 - **Kubernetes (v1.29+)**
 - **Argo CD** – Continuous delivery using GitOps
 - **GitHub** – Source of truth for infrastructure and application manifests
 
-### 🧪 Application Layer
+###  Application Layer
 - **FastAPI** – Python-based backend service
 - **Docker** – Containerized application runtime
 
-### 🔍 Observability & Ops
+###  Observability & Ops
 - **kubectl** – Cluster operations
 - **AWS CLI** – Cloud management
 - **Argo CD CLI** – Application sync and visibility
@@ -465,18 +465,7 @@ Reconciles desired state
 Restores application health.
 
 ---
-## 📸 Screenshots
-1️⃣ Local Development Validation (Optional but Good)
-
-01-docker-compose-running.png
-
-Confirms FastAPI app runs locally before cloud deployment
-
-Shows Docker-based validation of application
-
-![Docker Compose Running](screenshots/01-docker-compose-running.png)
-
-2️⃣ Multi-Region EKS Clusters Created
+## Screenshots
 
 01-eks-clusters-list.png
 
@@ -486,7 +475,7 @@ Proof of multi-region infrastructure
 
 ![EKS Clusters List](screenshots/01-eks-clusters-list.png)
 
-3️⃣ Worker Nodes Running (Compute Layer)
+
 
 02-eks-nodes-us-east-1.png
 
@@ -496,7 +485,7 @@ Proves Kubernetes cluster is operational
 
 ![EKS Nodes](screenshots/02-eks-nodes-us-east-1.png)
 
-4️⃣ Terraform Project Structure
+
 
 03-terraform-structure.png
 
@@ -506,7 +495,7 @@ Demonstrates modular, environment-based Terraform design
 
 ![Terraform Structure](screenshots/03-terraform-structure.png)
 
-5️⃣ Argo CD Application Created (GitOps)
+
 
 04-argocd-app-detail.png
 
@@ -516,7 +505,7 @@ Core proof of GitOps working
 
 ![ArgoCD App Detail](screenshots/04-argocd-app-detail.png)
 
-6️⃣ Argo CD Authentication
+
 
 05-argocd-login.png
 
@@ -526,7 +515,7 @@ Shows operational control plane access
 
 ![ArgoCD Login](screenshots/05-argocd-login.png)
 
-7️⃣ Kubernetes Manifests in Git
+
 
 06-k8s-manifests-folder.png
 
@@ -536,7 +525,7 @@ Reinforces GitOps principle
 
 ![K8s Manifests](screenshots/06-k8s-manifests-folder.png)
 
-8️⃣ Application Pods Running
+
 
 07-app-pods-running.png
 
@@ -546,7 +535,7 @@ Shows desired replicas achieved
 
 ![App Pods Running](screenshots/07-app-pods-running.png)
 
-9️⃣ Application Exposed via LoadBalancer
+
 
 08-service-loadbalancer.png
 
@@ -556,7 +545,7 @@ Confirms external accessibility
 
 ![Service LoadBalancer](screenshots/08-service-loadbalancer.png)
 
-🔟 Application Health Endpoint
+
 
 09-health-endpoint-working.png
 
@@ -566,7 +555,7 @@ Proves app is live and serving traffic
 
 ![Health Endpoint](screenshots/09-health-endpoint-working.png)
 
-1️⃣1️⃣ Global Traffic Management (Route 53)
+
 
 10-route53-latency-records.png
 
@@ -576,7 +565,7 @@ Proof of global traffic routing setup
 
 ![Route53 Latency Records](screenshots/10-route53-latency-records.png)
 
-1️⃣2️⃣ Route 53 Health Checks
+
 
 11-route53-health-checks.png
 
@@ -586,7 +575,7 @@ Enables automated failover
 
 ![Route53 Health Checks](screenshots/11-route53-health-checks.png)
 
-1️⃣3️⃣ Failover Simulation (Primary Region Down)
+
 
 12-scale-down-us-east-1.png
 
@@ -596,7 +585,7 @@ Simulates regional failure safely
 
 ![Scale Down Region](screenshots/12-scale-down-us-east-1.png)
 
-1️⃣4️⃣ Failover Success (Service Still Healthy)
+
 
 13-failover-still-healthy.png
 
