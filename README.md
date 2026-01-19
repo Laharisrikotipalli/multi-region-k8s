@@ -1,6 +1,6 @@
-# 🌍 Multi-Region Kubernetes Platform using GitOps (AWS EKS)
+#  Multi-Region Kubernetes Platform (AWS EKS)
 
-## 📌 Project Overview
+## Project Overview
 
 This project demonstrates a **production-grade, multi-region Kubernetes platform** built on **AWS EKS**, fully managed using **Infrastructure as Code (Terraform)** and **GitOps (Argo CD)**.
 
@@ -12,7 +12,7 @@ The platform is designed to:
 - Support **regional isolation and failover readiness**
 
 A **FastAPI application** is deployed consistently across regions using GitOps.
-## 🌐 Deployed Regions
+##  Deployed Regions
 
 The Kubernetes platform is deployed across **three AWS regions** to simulate a global, highly available setup:
 
@@ -30,7 +30,7 @@ This design ensures that each region can operate independently and supports disa
 
 ---
 
-## 🏗️ Architecture Overview
+##  Architecture Overview
 
 The following architecture illustrates the complete system design, including multi-region EKS clusters, GitOps flow, and global traffic routing.
 
@@ -44,7 +44,8 @@ The following architecture illustrates the complete system design, including mul
 - **FastAPI application** runs identically in all regions
 - **AWS Load Balancers** expose services externally
 - **GitHub** acts as the single source of truth
-## 🧰 Technology Stack
+- ---
+##  Technology Stack
 
 The following tools and technologies were used to build and manage this multi-region Kubernetes platform:
 
@@ -69,7 +70,6 @@ The following tools and technologies were used to build and manage this multi-re
 
 ### 🧪 Application Layer
 - **FastAPI** – Python-based backend service
-- **Uvicorn** – ASGI server
 - **Docker** – Containerized application runtime
 
 ### 🔍 Observability & Ops
@@ -77,13 +77,9 @@ The following tools and technologies were used to build and manage this multi-re
 - **AWS CLI** – Cloud management
 - **Argo CD CLI** – Application sync and visibility
 
-## 📁 Repository Structure & Screenshots
-
-This repository is organized to clearly separate **infrastructure**, **application manifests**, and **documentation**, following best practices for production-grade systems.
-
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 
 ```text
 multi-region-k8s/
@@ -111,7 +107,7 @@ multi-region-k8s/
 ```
 ----
 
-### 📌 Structure highlights
+### Structure highlights
 
 - **terraform/**  
   Manages complete AWS infrastructure using Infrastructure as Code.
@@ -130,7 +126,7 @@ multi-region-k8s/
   
   ---
   
-  ## 🔁 GitOps Workflow with Argo CD
+  ##  GitOps Workflow with Argo CD
 This project follows a **pure GitOps model**, where **GitHub is the single source of truth** for application deployment.
 
 ### GitOps Flow
@@ -167,10 +163,12 @@ Health status (Healthy / Degraded)
 
 Resource-level drift detection
 
-Example Argo CD CLI output:
+***Example Argo CD CLI output:***
+```
 argocd app get multi-region-app
+```
 ----
-## 🚀 Application Deployment (FastAPI)
+##  Application Deployment (FastAPI)
 
 A **FastAPI-based backend service** is deployed to each Kubernetes cluster using a standardized Kubernetes manifest managed by Argo CD.
 
@@ -195,24 +193,24 @@ Example deployment behavior:
 ```bash
 kubectl get pods
 ```
+```
 NAME                           READY   STATUS    AGE
 fastapi-app-xxxx               1/1     Running   5m
 fastapi-app-yyyy               1/1     Running   5m
 fastapi-app-zzzz               1/1     Running   5m
 Health Endpoint
-
+```
 The application exposes a health endpoint used for validation:
 
 GET /health
 
-
 Sample response:
-
+```
 {
   "status": "ok"
 }
 
-
+```
 This endpoint is used to:
 
 Verify service availability
@@ -220,7 +218,9 @@ Verify service availability
 Validate regional deployments
 
 Support external health checks
-## 🌐 Multi-Region Strategy & Failover Testing
+
+---
+##  Multi-Region Strategy & Failover Testing
 
 This project is designed to operate across **multiple AWS regions**, ensuring that the application remains available even if one entire region becomes unavailable.
 
@@ -237,7 +237,7 @@ Each region contains:
 
 ---
 
-## 🔁 GitOps-Based Multi-Region Deployment
+##  GitOps-Based Multi-Region Deployment
 
 Argo CD is installed in each cluster and continuously synchronizes application state from the same Git repository.
 
@@ -248,7 +248,7 @@ Key benefits:
 
 ---
 
-## 🧪 Failover Testing (Regional Isolation)
+##  Failover Testing (Regional Isolation)
 
 Failover testing was performed by **simulating a regional outage** at the application layer.
 
@@ -259,14 +259,13 @@ Failover testing was performed by **simulating a regional outage** at the applic
 kubectl config use-context arn:aws:eks:<region>:cluster/<cluster-name>
 ```
 Scale application replicas to zero:
-
+```
 kubectl scale deployment fastapi-app --replicas=0
-
-
+```
 Verify service impact:
-
+```
 kubectl get pods
-
+```
 
 Confirm that:
 
@@ -274,7 +273,7 @@ Other regions remain healthy
 
 Application continues serving traffic from remaining regions
 
-✅ Failover Validation
+### Failover Validation
 
 Each region operates independently
 
@@ -283,14 +282,16 @@ Failure in one region does not affect others
 Demonstrates regional fault isolation
 
 This confirms the platform’s ability to survive regional application failures.
-## 📊 Observability (Monitoring & Logging)
+
+---
+##  Observability (Monitoring & Logging)
 
 Observability is a key requirement for operating distributed, multi-region systems.  
 This project integrates **basic observability practices** to monitor application and infrastructure health across regions.
 
 ---
 
-## 🔍 Health Monitoring
+##  Health Monitoring
 
 Each deployed FastAPI service exposes a `/health` endpoint that provides a simple health status response.
 
@@ -300,11 +301,12 @@ Example check:
 curl http://<load-balancer-dns>/health
 ```
 Sample response:
+```
 
 {
   "status": "ok"
 }
-
+```
 
 This endpoint is used to:
 
@@ -314,7 +316,7 @@ Perform manual health checks during testing
 
 Support future integration with automated monitoring tools
 
-📜 Logging
+### Logging
 
 Application logs are accessible via Kubernetes logs
 
@@ -326,11 +328,12 @@ Request handling
 
 Error conditions
 
-Example:
-
+***Example:***
+```
 kubectl logs <pod-name>
-
-📈 Future Improvements
+```
+---
+## Future Improvements
 
 The platform is designed to easily integrate:
 
@@ -341,24 +344,26 @@ Centralized logging (ELK / CloudWatch)
 Distributed tracing (Jaeger / OpenTelemetry)
 
 This ensures the architecture is monitoring-ready for production.
-## 🗄️ Data Layer (PostgreSQL & Redis)
+
+---
+##  Data Layer (PostgreSQL & Redis)
 
 This project includes a **data layer provisioned per region** using **Terraform**, consisting of **PostgreSQL** and **Redis** services.
 
 ---
 
-## 🐘 PostgreSQL (Per Region)
+## PostgreSQL (Per Region)
 
 - PostgreSQL instances were provisioned **independently in each AWS region**
 - Infrastructure was fully managed using **Terraform**
 - Designed to support future **cross-region replication strategies**
-
+---
 ### Intended Design
 
 - Each region has its own database instance
 - Application connects to the regional database
 - Supports fault isolation and regional independence
-
+---
 ### Observed Behavior
 
 - PostgreSQL resources were successfully created via Terraform
@@ -372,7 +377,7 @@ The database layer is included to demonstrate:
 
 ---
 
-## ⚡ Redis (Caching Layer)
+## Redis (Caching Layer)
 
 - Redis instances were also provisioned per region
 - Intended to be used for:
@@ -387,7 +392,7 @@ The database layer is included to demonstrate:
 
 ---
 
-## 📌 Design Note
+##  Design Note
 
 This project focuses on **infrastructure, GitOps, and resilience**, not application-level data modeling.  
 The inclusion of PostgreSQL and Redis demonstrates:
@@ -400,13 +405,14 @@ Further improvements could include:
 - Managed replication (Aurora Global Database)
 - Secrets management
 - Connection pooling
-## 🚨 Disaster Recovery (DR) & Runbook Summary
+- ---
+##  Disaster Recovery (DR) & Runbook Summary
 
 This project includes a **documented and testable disaster recovery strategy** focused on **regional resilience** and **application continuity**.
 
 ---
 
-## 🎯 DR Objectives
+##  DR Objectives
 
 - **RTO (Recovery Time Objective):** Minimal (seconds to minutes)
 - **RPO (Recovery Point Objective):** Depends on database configuration (regional isolation)
@@ -417,7 +423,7 @@ The platform is designed so that:
 
 ---
 
-## 🧪 Disaster Simulation Approach
+##  Disaster Simulation Approach
 
 Instead of destroying infrastructure, DR testing was performed safely at the **application layer**.
 
@@ -428,14 +434,14 @@ Instead of destroying infrastructure, DR testing was performed safely at the **a
 kubectl config use-context arn:aws:eks:<region>:cluster/<cluster-name>
 ```
 Simulate outage:
-
+```
 kubectl scale deployment fastapi-app --replicas=0
-
+```
 
 Verify:
-
+```
 kubectl get pods
-
+```
 
 Validate:
 
@@ -443,12 +449,12 @@ Application in other regions continues running
 
 Load balancer endpoints remain healthy
 
-🔁 Recovery Procedure
+### Recovery Procedure
 
 To restore a failed region:
-
+```
 kubectl scale deployment fastapi-app --replicas=<desired-count>
-
+```
 
 Argo CD automatically:
 
@@ -456,11 +462,147 @@ Detects drift
 
 Reconciles desired state
 
-Restores application health
-## 📸 Screenshots
+Restores application health.
 
-- Argo CD application synced
-- Multi-region EKS clusters
-- Application running in multiple regions
-- Failover simulation (before & after)
+---
+## 📸 Screenshots
+1️⃣ Local Development Validation (Optional but Good)
+
+01-docker-compose-running.png
+
+Confirms FastAPI app runs locally before cloud deployment
+
+Shows Docker-based validation of application
+
+![Docker Compose Running](screenshots/01-docker-compose-running.png)
+
+2️⃣ Multi-Region EKS Clusters Created
+
+01-eks-clusters-list.png
+
+Shows all three EKS clusters created successfully
+
+Proof of multi-region infrastructure
+
+![EKS Clusters List](screenshots/01-eks-clusters-list.png)
+
+3️⃣ Worker Nodes Running (Compute Layer)
+
+02-eks-nodes-us-east-1.png
+
+Confirms worker nodes are Ready
+
+Proves Kubernetes cluster is operational
+
+![EKS Nodes](screenshots/02-eks-nodes-us-east-1.png)
+
+4️⃣ Terraform Project Structure
+
+03-terraform-structure.png
+
+Shows clean IaC structure
+
+Demonstrates modular, environment-based Terraform design
+
+![Terraform Structure](screenshots/03-terraform-structure.png)
+
+5️⃣ Argo CD Application Created (GitOps)
+
+04-argocd-app-detail.png
+
+Shows Argo CD application in Synced & Healthy state
+
+Core proof of GitOps working
+
+![ArgoCD App Detail](screenshots/04-argocd-app-detail.png)
+
+6️⃣ Argo CD Authentication
+
+05-argocd-login.png
+
+Confirms secure access to Argo CD UI
+
+Shows operational control plane access
+
+![ArgoCD Login](screenshots/05-argocd-login.png)
+
+7️⃣ Kubernetes Manifests in Git
+
+06-k8s-manifests-folder.png
+
+Shows declarative Kubernetes manifests tracked in Git
+
+Reinforces GitOps principle
+
+![K8s Manifests](screenshots/06-k8s-manifests-folder.png)
+
+8️⃣ Application Pods Running
+
+07-app-pods-running.png
+
+Confirms application pods are Running
+
+Shows desired replicas achieved
+
+![App Pods Running](screenshots/07-app-pods-running.png)
+
+9️⃣ Application Exposed via LoadBalancer
+
+08-service-loadbalancer.png
+
+Shows AWS LoadBalancer service
+
+Confirms external accessibility
+
+![Service LoadBalancer](screenshots/08-service-loadbalancer.png)
+
+🔟 Application Health Endpoint
+
+09-health-endpoint-working.png
+
+Confirms /health endpoint responds correctly
+
+Proves app is live and serving traffic
+
+![Health Endpoint](screenshots/09-health-endpoint-working.png)
+
+1️⃣1️⃣ Global Traffic Management (Route 53)
+
+10-route53-latency-records.png
+
+Shows latency-based routing records
+
+Proof of global traffic routing setup
+
+![Route53 Latency Records](screenshots/10-route53-latency-records.png)
+
+1️⃣2️⃣ Route 53 Health Checks
+
+11-route53-health-checks.png
+
+Confirms health checks configured per region
+
+Enables automated failover
+
+![Route53 Health Checks](screenshots/11-route53-health-checks.png)
+
+1️⃣3️⃣ Failover Simulation (Primary Region Down)
+
+12-scale-down-us-east-1.png
+
+Shows application scaled down in one region
+
+Simulates regional failure safely
+
+![Scale Down Region](screenshots/12-scale-down-us-east-1.png)
+
+1️⃣4️⃣ Failover Success (Service Still Healthy)
+
+13-failover-still-healthy.png
+
+Confirms traffic served from other regions
+
+Final proof of high availability
+
+![Failover Healthy](screenshots/13-failover-still-healthy.png)
 
